@@ -1,81 +1,72 @@
 ---
-import Layout from '../layouts/Layout.astro';
-import Card from '../components/Card.astro';
+import Layout from "@layouts/Layout.astro";
+
+import Hero from "@components/Hero.svelte";
+import Timeline from "@components/Timeline/Timeline.astro";
+import Clock from "@components/Clock.svelte";
+import SectionHeader from "@components/SectionHeader.astro";
+import Footer from "@components/Footer.astro";
+import { Icon } from "astro-icon";
+import NewsletterForm from "@components/NewsletterForm.svelte";
+
+const posts = (await Astro.glob("./posts/*.mdx")) || [];
 ---
 
 <Layout title="Welcome to Astro.">
-	<main>
-		<h1>Welcome to <span class="text-gradient">Astro</span></h1>
-		<p class="instructions">
-			To get started, open the directory <code>src/pages</code> in your project.<br />
-			<strong>Code Challenge:</strong> Tweak the "Welcome to Astro" message above.
-		</p>
-		<ul role="list" class="link-card-grid">
-			<Card
-				href="https://docs.astro.build/"
-				title="Documentation"
-				body="Learn how Astro works and explore the official API docs."
-			/>
-			<Card
-				href="https://astro.build/integrations/"
-				title="Integrations"
-				body="Supercharge your project with new frameworks and libraries."
-			/>
-			<Card
-				href="https://astro.build/themes/"
-				title="Themes"
-				body="Explore a galaxy of community-built starter themes."
-			/>
-			<Card
-				href="https://astro.build/chat/"
-				title="Community"
-				body="Come say hi to our amazing Discord community. ❤️"
-			/>
-		</ul>
-	</main>
+  <main class="z-10 w-full">
+    <div class="relative shadow-2xl">
+      <Hero client:load />
+      <div
+        class="absolute right-2 top-1/2 mr-4 mt-4 hidden h-0 w-0 -translate-y-20 -rotate-90 items-baseline justify-center tracking-widest md:flex lg:mr-8"
+      >
+        <Clock client:load />
+      </div>
+    </div>
+    <section
+      class="z-0 min-h-screen bg-gradient-to-tr from-gray-500 to-gray-400 shadow-2xl"
+    >
+      <SectionHeader title="Things I've been doing" />
+      <Timeline />
+      <div
+        class="h-16 border-t border-dashed border-gray-600 border-opacity-30 opacity-80"
+      >
+      </div>
+    </section>
+    <section
+      class="shadow-2lg relative z-10 min-h-screen bg-gradient-to-tr from-gray-900 to-gray-800"
+    >
+      <SectionHeader dark title="Things I've been writing about" />
+      <div
+        class="mx-auto grid w-full max-w-6xl justify-stretch gap-8 p-8 py-12 lg:grid-cols-3"
+      >
+        {
+          posts
+            .sort(
+              (a, b) =>
+                new Date(b.frontmatter.date).getTime() -
+                new Date(a.frontmatter.date).getTime()
+            )
+            .map((post) => (
+              <a
+                href={post.url}
+                class="group flex w-full flex-col rounded-lg border border-gray-600 bg-gradient-to-tr from-gray-800 to-gray-700 p-4 shadow-lg transition hover:border-sky-400 hover:from-gray-900 hover:to-gray-800"
+              >
+                <h4 class="mb-2 text-xl font-bold text-sky-200">
+                  {post.frontmatter.title}
+                </h4>
+                <p class="text-gray-400">{post.frontmatter.description}</p>
+                <Icon
+                  class="ml-auto mt-auto h-6 w-6 text-gray-400 transition-all group-hover:-translate-x-2 group-hover:text-sky-400"
+                  name="entypo:arrow-right"
+                />
+              </a>
+            ))
+        }
+      </div>
+      <div class="mt-8 w-full px-8 pb-24">
+        <NewsletterForm client:load />
+      </div>
+    </section>
+    <Footer />
+  </main>
 </Layout>
-
-<style>
-	main {
-		margin: auto;
-		padding: 1.5rem;
-		max-width: 60ch;
-	}
-	h1 {
-		font-size: 3rem;
-		font-weight: 800;
-		margin: 0;
-	}
-	.text-gradient {
-		background-image: var(--accent-gradient);
-		-webkit-background-clip: text;
-		-webkit-text-fill-color: transparent;
-		background-size: 400%;
-		background-position: 0%;
-	}
-	.instructions {
-		line-height: 1.6;
-		margin: 1rem 0;
-		border: 1px solid rgba(var(--accent), 25%);
-		background-color: white;
-		padding: 1rem;
-		border-radius: 0.4rem;
-	}
-	.instructions code {
-		font-size: 0.875em;
-		font-weight: bold;
-		background: rgba(var(--accent), 12%);
-		color: rgb(var(--accent));
-		border-radius: 4px;
-		padding: 0.3em 0.45em;
-	}
-	.instructions strong {
-		color: rgb(var(--accent));
-	}
-	.link-card-grid {
-		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(24ch, 1fr));
-		gap: 1rem;
-		padding: 0;
-	}
-</style>

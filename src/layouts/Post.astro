@@ -1,0 +1,66 @@
+---
+import "@fontsource/ibm-plex-mono/300.css";
+import "@fontsource/ibm-plex-mono/400.css";
+import "@fontsource/ibm-plex-sans/300.css";
+import "@fontsource/ibm-plex-sans/400.css";
+import "@fontsource/ibm-plex-sans/700.css";
+import { Icon } from "astro-icon";
+import Footer from "@components/Footer.astro";
+import ShareLinks from "@components/ShareLinks.astro";
+
+const { frontmatter } = Astro.props;
+---
+
+<!DOCTYPE html>
+<html lang="en" class="bg-gray-800">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="description" content="Astro description" />
+    <meta name="viewport" content="width=device-width" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{frontmatter.title}</title>
+  </head>
+  <body
+    class="min-h-screen w-full overflow-x-hidden bg-gradient-to-tr from-gray-300 to-gray-200"
+  >
+    <header class="w-full bg-gradient-to-tr from-gray-900 to-gray-800 pb-8">
+      <a
+        href="/"
+        class="lg:w-1/8 mb-4 inline-block rounded-br border-b border-r border-gray-700 bg-gray-900 p-2 text-gray-500 hover:border-sky-400 hover:text-sky-400 lg:mb-0"
+      >
+        <Icon class="h-8 w-8" name="entypo:arrow-left" />
+      </a>
+      <div class="mx-auto w-full max-w-5xl flex-grow p-4 text-center">
+        <h1 class="mb-4 w-full text-2xl font-bold text-sky-500 lg:text-5xl">
+          {frontmatter.title}
+        </h1>
+        <p class="mx-auto mb-8 max-w-3xl text-sky-200 lg:text-lg">
+          {frontmatter.description}
+        </p>
+        <p class="text-gray-400">
+          <span>By</span>{" "}<a class="underline hover:text-gray-300" href="/"
+            >Marc Farias Jones</a
+          >
+        </p>
+      </div>
+      <div class="w-1/8"></div>
+    </header>
+    <div
+      class="relative mx-auto max-w-6xl grid-flow-dense md:grid md:grid-cols-12"
+    >
+      <aside
+        class="sticky top-8 col-span-1 mt-24 hidden place-self-start md:col-start-2 md:block lg:col-start-3"
+      >
+        <ShareLinks />
+      </aside>
+      <main
+        class="grid-row-1 prose col-span-9 mx-auto place-self-start px-4 py-16 prose-ul:marker:text-sky-400 lg:mx-0 lg:px-0"
+      >
+        <slot />
+      </main>
+    </div>
+    <Footer />
+  </body>
+</html>
+<style></style>

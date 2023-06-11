@@ -1,0 +1,32 @@
+---
+import TimelineCard from "./TimelineCard.astro";
+import timeline, { type TimelineItem } from "@data/timeline";
+---
+
+<div
+  class="relative z-10 mx-auto max-w-6xl grid-flow-dense grid-cols-12 px-4 pb-16 pt-12 lg:grid lg:px-0"
+>
+  <div
+    class="absolute left-1/2 top-0 -z-10 mx-auto h-6 w-6 -translate-x-1/2 -translate-y-1/2 rounded-full border-4 border-gray-300 border-opacity-50 bg-gray-400 shadow-lg"
+  >
+  </div>
+  <div class="absolute left-1/2 top-0 h-full w-2 -translate-x-1/2 bg-gray-400">
+  </div>
+  {
+    timeline.map((item: TimelineItem, index: number) => (
+      <TimelineCard
+        title={item.title}
+        date={item.date}
+        description={item.description}
+        image={item.image}
+        imageAlt={item.imageAlt}
+        tags={item.tags}
+        position={index % 2 === 0 ? "left" : "right"}
+      />
+    ))
+  }
+  <div
+    class="absolute bottom-0 left-1/2 -z-10 mx-auto h-6 w-6 -translate-x-1/2 translate-y-1/2 rounded-full border-4 border-gray-300 border-opacity-50 bg-gray-400 shadow-lg"
+  >
+  </div>
+</div>

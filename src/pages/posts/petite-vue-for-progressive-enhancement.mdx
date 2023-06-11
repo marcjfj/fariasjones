@@ -1,0 +1,109 @@
+---
+title: Why you should try petite-vue for progressive enhancement
+description: Use-cases for a ultra-lightweight distribution of Vue.js
+date: 2021-05-25
+---
+
+Need to add interactivity to a web page but don't want the bloat of a full-featured front-end library like Vue, React, or our trusty friend jQuery? Sure, you could get it done with vanilla JavaScript but the code could end up verbose and difficult to maintain. A tiny new library called [petite-vue](https://github.com/vuejs/petite-vue) might be the right tool for the job.
+
+A recent release from the creator of Vue.js and Vite, [Evan You](https://twitter.com/youyuxi), `petite-vue` is a lightweight distribution of [Vue.js](https://github.com/vuejs/vue) that provides much of the common functionality of the full library, along with its familiar syntax.
+
+Let's look at a few reasons to consider `petite-vue` for your project.
+
+## It's small
+
+At just 6kb gzipped, `petite-vue` provides an amazing amount features for its size. Let's see how it compares to other popular libraries.
+
+| Package    | Size  | gzipped | 3G Load time |
+| ---------- | ----- | ------- | ------------ |
+| React DOM  | 121kb | 39kb    | 99ms         |
+| jQuery     | 88kb  | 30kb    | 76ms         |
+| Vue        | 64kb  | 23kb    | 57ms         |
+| Alpine.js  | 44kb  | 16kb    | 41ms         |
+| petite-vue | 15kb  | 6kb     | 16ms         |
+
+If performance is a concern, that alone should be enough to pique your interest!
+
+## The DOM is the template
+
+Unlike Vue or React, which compile and render templates, `petite-vue` uses the existing DOM as the template by attaching effects to elements in your markup. This makes `petite-vue` well optimized for progressive enhancement and easy to use sparingly for applications that rely primarily on server rendered content.
+
+### Isolate petite-vue to only the aside element in your markup...
+
+```html
+<header></header>
+
+<!-- v-scope tells petite-vue to mount to this element  -->
+<aside v-scope></aside>
+
+<main></main>
+```
+
+### ...or in your JS/TS
+
+```js
+// app     // state        // mount target
+createApp({ categories: [] }).mount("aside");
+```
+
+This is especially helpful if you are integrating personalization frameworks that need to update the dom using their own methods and you need to leave much of the page untouched by your javascript hydration engine. `petite-vue` is a great way to implement [Island Architecture](https://jasonformat.com/islands-architecture/) which, for good reason, has been quickly growing in popularity.
+
+## Global state is built in
+
+If you need to share state between components with Vue or React, you're likely going to be pulling in yet another library to manage your state store. This would be a bummer if you're trying to keep your JavaScript small and performant. Using the `reactive()` function, you can add global state in a few lines of code.
+
+```js
+// declaring a global state store
+const store = reactive({
+  // reactive state
+  cart: [],
+  // mutations
+  addToCart(item) {
+    this.cart.push(item);
+  },
+  // getters
+  get cartCount() {
+    return cart.length;
+  },
+});
+```
+
+This reactive object is now available to any component in the document.
+
+## No build step needed
+
+Of course you want to try the latest and greatest JS frameworks but who wants to deal with all of the boilerplate and battle with webpack all day? Luckily, since there's no templates to compile, `petite-vue` works right out of the box. Pull it in with npm or just toss in a script tag pointing to its CDN and you're off to the races.
+
+## It's Vue
+
+`petite-vue`, created and maintained by the Vue Core team, aims to keep its API as close to that of the main distribution as possible. This makes for an almost effortless transition for developers that are already comfortable with Vue.
+
+```html
+<div class="filters">
+  <input
+    class="search"
+    type="search"
+    placeholder="Search"
+    @input="updateSearchText($el.value)"
+  /><!--👆 @event syntax   -->
+
+  <select class="departments" @change="updateFilter($el.value)">
+    <option value="">All Departments</option>
+    <!-- v-for for iterating over data   -->
+    <option v-for="department in departments" :value="department">
+      <!--text interpolation-->
+      {{ department }}
+    </option>
+  </select>
+</div>
+```
+
+## When to not use petite-vue
+
+`petite-vue` is sounding pretty great, but is it the right tool for every project? Of course not. Here are a few reasons to NOT choose `petite-vue`.
+
+- Your project's UI is complex and highly interactive. If most of your application is being rendered and updated via JavaScript, `petite-vue` may start feeling underpowered as there are many features that are not available, like reusable single-file components and client-side routing.
+- You want to use third party plugins. React, Vue, and Angular each have enormous ecosystems of open-source plugins and components that can speed up development for large and complex applications, a convenience that you won't find with `petite-vue`.
+- You don't need a library at all. If you need a little JavaScript to create some interactivity on an otherwise static page, you might just find that vanilla JavaScript is perfectly capable solution and adding a UI library of any sort would be an unneeded abstraction.
+
+If your project's constraints don't allow for a fully javascript rendered application but you still want to break free from the grips of jQuery, `petite-vue` might be just end up being the perfect fit for your project.

@@ -1,0 +1,97 @@
+---
+title: How to set a default markdown layout in Astro
+description: Simplify the composition of your md/mdx pages by setting a default layout in Astro with one function
+date: 2023-06-10
+---
+
+# Setting a default markdown layout in Astro
+
+[Astro](https://astro.build/) is a framework for creating multi-page-applications with a focus on speed. It’s a great choice for SEO friendly marketing sites as it’s rich with features to optimize assets and publish content.
+
+One of Astro’s niceties is its support for consuming markdown files and publishing them as HTML. There’s also great tooling around applying layouts to the compiled documents.
+
+## Standard use of layouts
+
+Here’s what [the docs](https://astro.build/) recommend for setting up a layout for markdown pages:
+
+### 1. Create a .astro layout template
+
+It might look something like this:
+
+```jsx
+// BlogPostLayout.astro
+---
+import Header from "@components/Header.astro";
+import Footer from "@components/Footer.astro";
+
+// extract frontmatter from the markdown file
+const { frontmatter } = Astro.props;
+---
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>{frontmatter.title}</title>
+  </head>
+  <body>
+    <Header title={frontmatter.title} />
+    <main>
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>
+```
+
+It works about how you would expect, with the markdown being parsed and injected into the `<slot />` component. Additionally, the layout is extracting data from the markdown file’s [“frontmatter”](https://daily-dev-tips.com/posts/what-exactly-is-frontmatter/) so that you can render that information anywhere on the page. Pretty cool.
+
+Speaking of frontmatter, the next step is…
+
+### 2. Add a layout property to the markdown file’s frontmatter
+
+The same frontmatter that we use to provide parsable data to the layout is where we can specify which layout to use.
+
+This is what that looks like:
+
+```markdown
+<!-- my-blog-post.md(x) -->
+
+title: My Wonderful Blog Post
+description: Lorem ipsum dolor
+layout: "@layouts/BlogPostLayout.astro"
+
+---
+
+## My post's content
+
+Here's some body text for my post
+```
+
+The frontmatter (sandwiched between the `---` blocks) now has a layout property that Astro will automatically read it use to compile the page. This is great, but do I really need to specify the layout on every MD/MDX file? What if I only have one layout for my markdown files?
+
+## Custom plugins to the rescue
+
+Unfortunately Astro does not currently include first-party support for setting a default layout, but through its [remark.js](https://remark.js.org/) plugin interface, we add the layout property programmatically to that we don’t need to include it manually to each markdown page.
+
+```jsx
+// Astro.config.mjs
+
+const setLayout = () => {
+  return function (_, file) {
+    file.data.astro.frontmatter.layout =
+      file.data.astro.frontmatter.layout || "@layouts/BlogPostLayout.astro";
+  };
+};
+
+// https://astro.build/config
+export default defineConfig({
+  markdown: {
+    remarkPlugins: [setLayout],
+  },
+  // ...
+});
+```
+
+This function is injected into the remark integration, allowing us to modify the MD or MDX file before it is compiled. It looks for the presence of a layout property in the frontmatter and, if none is set, sets it to our default "@layouts/BlogPostLayout.astro". Now we have a default layout for our markdown pages that we can override if we need.
+
+Now we can use markdown files without having to specify a layout on each one. This is especially useful if you have a lot of markdown files that you want to use the same layout or if you are migrating your markdown from another system. Yay! 🎉

@@ -1,0 +1,71 @@
+---
+interface Props {
+  date: string;
+  image: string;
+  imageAlt: string;
+  title: string;
+  description: string;
+  position: "left" | "right";
+  tags: string[];
+}
+
+const { date, image, imageAlt, title, description, position, tags } =
+  Astro.props;
+
+const cardPositionClasses = {
+  left: "col-start-2",
+  right: "col-start-8",
+};
+
+const datePositionClasses = {
+  left: "col-start-7 justify-start",
+  right: "col-start-1 justify-end",
+};
+
+const linePositionClasses = {
+  left: "col-start-6",
+  right: "col-start-7",
+};
+---
+
+<span
+  class={`flex p-4 lg:p-8 items-center tracking-widest col-span-6 font-bold text-xl lg:text-2xl text-gray-500 ${datePositionClasses[position]}`}
+>
+  {date}
+</span>
+<div class={`col-span-4 ${cardPositionClasses[position]}`}>
+  <div class="relative rounded-xl bg-gray-400 p-2">
+    <div
+      class="relative rounded-lg bg-gradient-to-tr from-gray-400 to-gray-300 p-4 shadow-lg"
+    >
+      <img
+        class="mb-4 block h-6 w-32 object-contain object-left"
+        src={image}
+        alt={imageAlt}
+      />
+
+      <h4 class="mb-2 break-keep text-xl font-bold text-sky-800">
+        {title}
+      </h4>
+      <p class="text-gray-600">
+        {description}
+      </p>
+      {
+        tags && (
+          <div class="mt-8">
+            {tags.map((tag) => (
+              <span class="mb-2 mr-2 inline-block rounded bg-gray-300 bg-opacity-30 px-3 py-1 text-sm font-semibold text-gray-700">
+                {tag}
+              </span>
+            ))}
+          </div>
+        )
+      }
+    </div>
+  </div>
+</div>
+<div
+  class={`flex items-center justify-center ${linePositionClasses[position]}`}
+>
+  <div class="h-6 w-2 bg-gray-400 lg:h-2 lg:w-full"></div>
+</div>

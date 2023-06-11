@@ -1,0 +1,72 @@
+---
+title: Third party libraries / red flags
+description: Red flags and considerations when using choosing third party software development libraries.
+date: 2023-05-15
+---
+
+## The beauty of open source
+
+As developers, we stand on the shoulders of benevolent giants. From [Linus Torvalds](https://github.com/torvalds) to [Taylor Otwell](https://github.com/taylorotwell), the tradition of open source development continues to enhance the way we build software and move the capabilities of our industry forward. We can build complex systems in an afternoon or deploy a website in minutes, all without paying a dime or even understanding how it works. In fact, we've become so accustomed to npm-installing away our problems that we might not notice the red flags glaring back at us, threatening to introduce bugs, security vulnerabilities, technical debt, and legal liabilities into our codebase.
+
+## Starting Strong
+
+Let's say we're building a quick MVP app for a client. We need a database, a server, and a UI framework. We also want realtime updates from the server via web sockets to make this app really pop! There are plenty of great options so let's put together a nice modern stack based on some solid open source crowd favorites:
+
+- [MongoDB](https://www.mongodb.com/) - A document database
+- [FastApi](https://fastapi.tiangolo.com/) - A Python web framework
+- [Socket.io](https://socket.io/) - A realtime communication library
+- [Vue.js](https://vuejs.org/) - A JavaScript UI framework
+
+Wowzers! That's a pretty slick stack. These are blue-chip libraries with huge communities, ample documentation, and a focus on developer experience. This app is going to be a breeze to build.
+
+## Fitting the pieces together
+
+Even though we have our core stack established, we're moving fast so let's see if we can find some #opensource libraries to help integrate these technologies so we don’t have to!
+
+Let's start with a google search for "FastAPI [Socket.io](http://socket.io/)".
+
+Nice, the first result is GitHub repo with a package called [fastapi-socketio](https://github.com/pyropy/fastapi-socketio). This sounds like just what we need. It has a few contributors, a couple hundred stars, and ...sparse documentation.
+
+### 🚩 #1: Sparse Documentation
+
+If a library is saving us a lot of work, it will typically need quite a bit of documentation to explain the abstractions it's providing. A library with little documentation might be a sign of either poor maintainership or maybe a library that is just not doing much.
+
+A closer look at the repo shows that the library has only 44 commits and the last commit had a failed test?
+
+### 🚩 #2: Few Commits / 🚩 #3: Failed Tests
+
+While the last commit to this library is only a few months old, it was a merged PR from someone other than the maintainer (who ignored the failed test). In fact most of the commits are from other individual contributors solving their own problems encountered with the library. The maintainer has only 2 commits in the last 2 years and it looks like they are not actively maintaining the library at all. We should be starting to wonder what this library is actually doing for us. Let's take a look at the code.
+
+### 🚩 #4: Hat on a hat
+
+Digging into the [source code](https://github.com/pyropy/fastapi-socketio/blob/master/fastapi_socketio/socket_manager.py), we quickly realize that this library is just one class acting as a thin wrapper around another (much more robust) library, [python-socketio](https://github.com/miguelgrinberg/python-socketio). Apart from consolidating a few initialization steps, it's not providing much value for us at all. In fact, it's just adding a layer of indirection that we'll have to work around when we need to do something that the library doesn't support.
+
+It's looking like we should just use the well documented and maintained [python-socketio](https://github.com/miguelgrinberg/python-socketio) library directly, to avoid being locked into this sketchy wrapper library API.
+
+## On to the front end
+
+We're building UI with Vue, remember? Let's see if we can find a Vue-specific library to help us integrate with [socket.io](http://socket.io/) on the client side!
+
+A quick google search for "Vue 3 [Socket.io](http://socket.io/)" brings us to the perfectly named package, [vue-3-socket.io](https://github.com/kil0ba/Vue-3-Socket.io). Looks like a fork of a pretty popular library [vue-socket.io](https://github.com/MetinSeylan/Vue-Socket.io), updated to work with the new Vue 3 API. Only a few lines of code have changed, other than the updated attributions. The Readme is practically the same and the link to the project website is broken. It’s getting iffy.
+
+### 🚩 #5: Some random person's fork
+
+People often fork other people’s libraries and tweak them to their own needs. The ability to do so is another reason open source is awesome. In most of these cases, however, even if their tweak solves your problem now, the stranger that you’ve assigned the task of maintaining your dependency is not likely to be committed to spending any more time on the project. By using some unvetted stranger’s fork, you are losing any hope that did exist for the library that you chose to be maintained in the future or even remain published. In this case, the update to make the [vue-3-socket.io](http://vue-3-socket.io/) library Vue 3 compatible is line-for-line the same as the update in the original library, so it’s clear that there’s absolutely no value in risking it on the fork.
+
+Let's look at the original [vue-socket.io](http://vue-socket.io/) library. It says it’s been updated for Vue 3, it must be okay, right? Right?
+
+### 🚩 #6: Outdated dependencies
+
+A quick look at the library’s [package.json](https://github.com/MetinSeylan/Vue-Socket.io/blob/master/package.json) shows that it's built on top of socket.io-client v2.1.1. This version is 5 years old. The current release is two major versions ahead (4.6.1). Not only is this a sign that the library is not actively maintained, it will also cause us problems when we [try to use it with our socket.io server](https://socket.io/docs/v3/client-installation/#version-compatibility). We'll have to downgrade to an older version of socket.io-server to make sure that the client and server are compatible. This is a huge red flag. We're talking about passing browser data to servers, it’s not the time to dismiss vulnerabilities caused from outdated libraries. We're going to have to find a something else to use.
+
+## The shortest distance between two points
+
+[Socket.io](http://socket.io/) has its own client-side library, [socket.io-client](https://github.com/socketio/socket.io-client), so why did we even bother looking for a Vue library? With the advent of modern package managers, the ease of installing external libraries for any bit of arbitrary functionality starts to look like a reasonable option. This is especially true in the era of frameworks like React or Vue, where the magic state driven UI updates feel like they require specifically compatible libraries developed by people much smarter than ourselves. Maybe every framework doesn’t need an adapter for every library. Maybe it's better to reduce the number of dependencies in our stack and keep potential points of failure to a minimum (or at least in our control). Maybe [Socket.io](http://socket.io/) has a [guide that shows you how to integrate with Vue 3](https://socket.io/how-to/use-with-vue). In the long term, it's always safer to stick with the larger, well maintained library and avoid the hat on a hat problem. Eventually the underlying libraries will update, introducing breaking changes that, without swift action on the part of wrapper library maintainer, will leave your project in a tight spot.
+
+## The long road ahead
+
+Using a third party library is a commitment. The second you import that package and start using the API provided, you are building technical debt. [If that library becomes unpublished, your app stops working](https://lwn.net/Articles/681410/). Its vulnerabilities become your vulnerabilities. Its bugs are your bugs. At the end of the day, sometimes the appeal of reducing your own written lines of code is not worth the headache of dealing with someone else's.
+
+### Bonus 🚩: No license/Restrictive license
+
+Always check the license for any dependency that you pull into your project. No license does not mean "do whatever you want with it". [It means very much the opposite.](https://choosealicense.com/no-permission/)
