@@ -101,13 +101,11 @@ const initTerminal = async (termElement: HTMLElement, input: string) => {
       term.write(e.key);
       return;
     }
-    console.log({ cursorPosition, input });
     if (cursorPosition >= input.length) {
       input += e.key;
       cursorPosition++;
       term.write(e.key);
     } else {
-      console.log("inner", { cursorPosition, input });
       const start = input.slice(0, cursorPosition);
       const end = input.slice(cursorPosition);
       input = start + e.key + end;
@@ -127,7 +125,6 @@ const printWelcome = (term: any) => {
 
 const handleCmd = async (term: any, input: string) => {
   const [cmd, ...args] = input.split(" ");
-  console.log({ cmd, args });
   const matched = commands.find((i) => i.name === cmd);
   if (matched) {
     const out = await matched.handler(term, args, position, tree, dispatch);

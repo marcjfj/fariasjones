@@ -17,8 +17,6 @@ export const get: APIRoute = async ({ params, request }) => {
     }
   );
 
-  console.log(data);
-
   return {
     body: JSON.stringify(data),
   };
