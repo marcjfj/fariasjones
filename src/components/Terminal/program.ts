@@ -2,7 +2,7 @@ import c from "ansi-colors";
 import Theme from "./theme";
 import FontFaceObserver from "fontfaceobserver";
 import { pause, nl, start, nlst, clearLine, moveLeft, slowType } from "./utils";
-import commands, { listDir } from "./commands";
+import commands, { listDir, handleOpen } from "./commands";
 
 let dispatch: any = null;
 
@@ -150,6 +150,16 @@ export const runProgram = async (
   const repo = await fetchRepo();
   tree = repo.tree;
   await pause(1000);
+  await introSequence(term);
+
+
+  input = "";
+  cursorPosition = 0;
+  return;
+};
+
+
+const introSequence = async (term: any) => {
   term.write(c.green('$ '))
   await pause(200);
   await slowType(term, "git clone https://github.com/marcjfj/fariasjones.git .");
@@ -175,15 +185,15 @@ export const runProgram = async (
   term.write(`Resolving deltas: 100% (56/56), done.`);
   await pause(200);
   term.write(nlst(position));
-  await pause(1000);
+  slowType(term, "open src/data/hero.ts"+nl);
+  await pause(500);
+  handleOpen(term, ["src/data/hero.ts"], position, tree, dispatch);
+  term.write(nlst(position));
+  await pause(2000);
   slowType(term, "ls");
   await pause(500);
   term.write(nl);
   await listDir(term, "", position, tree);
   term.write(nlst(position));
-
-
-  input = "";
-  cursorPosition = 0;
   return;
-};
+}

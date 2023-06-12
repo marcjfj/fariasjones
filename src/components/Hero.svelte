@@ -32,14 +32,14 @@ $: positionClass = {
   class="relative z-10 mx-auto flex w-full max-w-6xl grid-cols-12 flex-col-reverse items-center justify-end p-4 lg:grid lg:min-h-screen lg:items-center lg:gap-4 lg:p-0"
 >
   <div
-    class="-mb-20 w-full max-w-2xl lg:col-span-6 lg:mb-32 lg:block xl:col-span-6"
+    class="-mb-20 w-full max-w-2xl lg:col-span-6 lg:mb-16 lg:block xl:col-span-6"
   >
     <div class={`relative ${positionClass.EDITOR} w-full lg:-ml-8 lg:mr-24 lg:w-auto`}>
       <div
         class="absolute pointer-events-none -right-8 -top-8 hidden h-12 w-12 rounded-tr-2xl border-r-8 border-t-8 border-gray-700 md:block"
       >
       </div>
-      <Editor on:select={select}  selected={selected === 'EDITOR'} title={selectedFile?.path || 'marc.ts'} content={selectedFile?.content || undefined} />
+      <Editor on:select={select}  selected={selected === 'EDITOR'} title={selectedFile?.path || ''} content={selectedFile?.content || undefined} />
     </div>
     <div class={`relative ${positionClass.TERMINAL} -mt-8 ml-8 mr-8 hidden lg:block lg:w-auto`}>
       <Terminal on:open={openFile} on:select={select} selected={selected === 'TERMINAL'} />

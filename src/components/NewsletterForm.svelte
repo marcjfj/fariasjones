@@ -46,7 +46,7 @@ const handleSubmit = async (e: Event) => {
     <label for="email-input" class="mb-1 text-left block text-sm text-gray-300"
     >Email</label
     >
-    <div class="flex overflow-hidden rounded-md border border-gray-500 shadow">
+    <div class="flex overflow-hidden rounded-md border border-gray-500 shadow-lg">
       <input
       type="email"
       name="email"

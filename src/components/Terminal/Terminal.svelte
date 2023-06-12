@@ -1,8 +1,6 @@
 <script lang="ts">
 import { onMount } from 'svelte';
-import Theme from './theme';
 import WindowHeader from '../WindowHeader.svelte';
-import FontFaceObserver from 'fontfaceobserver';
 import {runProgram} from './program';
 import { createEventDispatcher } from 'svelte';
 

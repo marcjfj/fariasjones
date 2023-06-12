@@ -2,11 +2,11 @@
   import { onMount } from 'svelte'
   import WindowHeader from '../WindowHeader.svelte';
   import { createEventDispatcher } from 'svelte';
-  import { get } from 'svelte/store';
+  import {initEditor} from './program.ts';
 
 	const dispatch = createEventDispatcher();
 
-  export let content = `// Use the terminal to explore my site's source code.`
+  export let content = ''
 
   const langs =  {
     css: 'css',
@@ -27,7 +27,7 @@
   }
 
 
-  export let title = 'marc.ts'
+  export let title = ''
 
   let monaco: any
 
@@ -36,56 +36,9 @@
   
   let container: HTMLDivElement
   onMount(async () => {
-    monaco = await import('monaco-editor')
-    const {default:editorWorker} = await import('monaco-editor/esm/vs/editor/editor.worker?worker')
-    const {default:jsonWorker} = await import('monaco-editor/esm/vs/language/json/json.worker?worker')
-    const {default:cssWorker} = await import('monaco-editor/esm/vs/language/css/css.worker?worker')
-    const {default:htmlWorker} = await import('monaco-editor/esm/vs/language/html/html.worker?worker')
-    const {default:tsWorker} = await import('monaco-editor/esm/vs/language/typescript/ts.worker?worker')
-
-  self.MonacoEnvironment = {
-    getWorker(_, label) {
-      if (label === 'json') {
-        return new jsonWorker()
-      }
-      if (label === 'css' || label === 'scss' || label === 'less') {
-        return new cssWorker()
-      }
-      if (label === 'html' || label === 'handlebars' || label === 'razor') {
-        return new htmlWorker()
-      }
-      if (label === 'typescript' || label === 'javascript') {
-        return new tsWorker()
-      }
-      return new editorWorker()
-    }
-  }
-  
-  editor = monaco.editor.create(container, {
-    value: content,
-    language: 'typescript',
-    fontSize: window.innerWidth < 768 ? 10 : 12,
-    fontFamily: 'IBM Plex Mono',
-    fontLigatures: true,
-    scrollBeyondLastLine: false,
-    lineHeight: 20,
-    fontWeight: '300',
-    automaticLayout: true,
-    minimap: {
-      enabled: false
-    },
-    
-  })
-  
-
-  const {theme} = await import('./theme');
-  monaco.editor.defineTheme('theme', theme)
-  monaco.editor.setTheme('theme')
-
-  monaco.languages.typescript.typescriptDefaults.setDiagnosticsOptions({
-  noSemanticValidation: true,
-  noSyntaxValidation: true,
-});
+    const e = await initEditor(container)
+    monaco = e.monaco
+    editor = e.editor
 
 })
 
@@ -96,13 +49,12 @@ const select = (frame: string) => {
 }
 </script>
 
-<div on:click={() => select('EDITOR')} on:keydown={() => select('EDITOR')} class={`rounded-lg min-h-[257px] flex pb-4 flex-col bg-gray-900 overflow-hidden shadow-xl border ${borderClass}`}>
+<div  on:click={() => select('EDITOR')} on:keydown={() => select('EDITOR')} class={`rounded-lg min-h-[257px] flex pb-4 flex-col bg-gray-900 overflow-hidden shadow-xl border ${borderClass}`}>
   <WindowHeader title={title} />
   <div class="w-full flex-grow h-full relative">
     <div bind:this={container} class="absolute inset-0">
     </div>
   </div>
-
 </div>
 
 <style>
