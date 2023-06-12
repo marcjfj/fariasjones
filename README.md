@@ -1,6 +1,6 @@
 # fariasjones.com
 
-[visit](https://fariasjones.com)
+## [Link 🔗](https://fariasjones.com)
 
 My personal website.
 

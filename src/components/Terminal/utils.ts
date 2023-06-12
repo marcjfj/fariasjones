@@ -18,3 +18,11 @@ export const nlst = (pos: string) => nl + start(pos);
 export const moveLeft = (term: any, length: number = 1) => {
   term.write("\x1b[D".repeat(length));
 };
+
+export const slowType = async (term: any, text: string) => {
+  const textArr = text.split("");
+  for await (let char of textArr) {
+    await pause(30);
+    term.write(char);
+  }
+}

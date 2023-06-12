@@ -1,7 +1,7 @@
 import c from "ansi-colors";
 import Theme from "./theme";
 import FontFaceObserver from "fontfaceobserver";
-import { pause, nl, start, nlst, clearLine, moveLeft } from "./utils";
+import { pause, nl, start, nlst, clearLine, moveLeft, slowType } from "./utils";
 import commands, { listDir } from "./commands";
 
 let dispatch: any = null;
@@ -120,7 +120,6 @@ const initTerminal = async (termElement: HTMLElement, input: string) => {
 
 const printWelcome = (term: any) => {
   term.write(`${welcome} \r\n`);
-  term.write(start(position));
 };
 
 const handleCmd = async (term: any, input: string) => {
@@ -151,11 +150,39 @@ export const runProgram = async (
   const repo = await fetchRepo();
   tree = repo.tree;
   await pause(1000);
-  term.write("ls");
+  term.write(c.green('$ '))
   await pause(200);
+  await slowType(term, "git clone https://github.com/marcjfj/fariasjones.git .");
+  term.write(nl);
+  term.write(`Cloning into '.'...`);
+  await pause(1000);
+  term.write(nl);
+  term.write(`remote: Enumerating objects: 151, done.`);
+  await pause(200);
+  term.write(nl);
+  term.write(`remote: Counting objects: 100% (151/151), done.`);
+  await pause(200);
+  term.write(nl);
+  term.write(`Compressing objects: 100% (151/151), done.`);
+  await pause(200);
+  term.write(nl);
+  term.write(`remote: Total 151 (delta 56), reused 128 (delta 33), pack-reused 0`);
+  await pause(200);
+  term.write(nl);
+  term.write(`100% (151/151), 243.76 KiB | 1.85 MiB/s, done.`);
+  await pause(200);
+  term.write(nl);
+  term.write(`Resolving deltas: 100% (56/56), done.`);
+  await pause(200);
+  term.write(nlst(position));
+  await pause(1000);
+  slowType(term, "ls");
+  await pause(500);
   term.write(nl);
   await listDir(term, "", position, tree);
   term.write(nlst(position));
+
+
   input = "";
   cursorPosition = 0;
   return;

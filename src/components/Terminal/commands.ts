@@ -110,10 +110,7 @@ const handleHelp = (term: any) => {
   term.write(
     c.white(
       `Here are some commands you can try: \r\n\r\n` +
-        `  ${c.green("ls")} - list directories \r\n` +
-        `  ${c.green("cd")} - change directories \r\n` +
-        `  ${c.green("open")} - open a file \r\n` +
-        `  ${c.green("clear")} - Clear the terminal \r\n`
+      commands.map((cmd) => c.blue(`  ${c.white(cmd.name)} - ${cmd.description}`)).join("\r\n")
     )
   );
   term.write(nl);
@@ -163,7 +160,7 @@ interface Command {
   ) => any;
 }
 
-export default [
+const commands = [
   {
     name: "help",
     description: "List available commands",
@@ -193,3 +190,5 @@ export default [
     },
   },
 ] as Command[];
+
+export default commands;

@@ -6,15 +6,7 @@
 
 	const dispatch = createEventDispatcher();
 
-  export let content = `export default {
-    name:       'Marc Farias Jones',
-    specialty:  'Software Development',
-    contact: {
-      email:    'marc@fariasjones.com',
-      linkedIn: 'https://linkedin.com/in/marcjfj',
-      github:   'https://github.com/marcjfj'
-    }
-  }`
+  export let content = `// Use the terminal to explore my site's source code.`
 
   const langs =  {
     css: 'css',
