@@ -1,6 +1,5 @@
 import { nl, pause } from "./utils";
 import c from "ansi-colors";
-import { createEventDispatcher } from "svelte";
 
 const handleCd = async (
   term: any,
@@ -13,13 +12,11 @@ const handleCd = async (
 
   const path = args[0].endsWith("/") ? args[0].slice(0, -1) : args[0];
 
-  console.log({ trimmed: path });
   if (!path || path === "~") {
     position = "";
     return { position };
   }
   const pathParts = path.split("/");
-  console.log({ pathParts });
   pathParts.forEach((part) => {
     if (part === "..") {
       if (!position) {
@@ -28,11 +25,9 @@ const handleCd = async (
         term.write(nl);
         return;
       } else {
-        console.log("back-pre", { position });
         const positionParts = position.split("/");
         positionParts.pop();
         position = positionParts.length ? positionParts.join("/") : "";
-        console.log("back", { position });
         return;
       }
     }
@@ -45,14 +40,12 @@ const handleCd = async (
 
     if (matched) {
       position = matched.path;
-      console.log("matched", { position });
     } else {
       term.write(nl);
       term.write(c.red(`Directory not found: ${path}`));
       term.write(nl);
     }
   });
-  console.log({ return: position });
   return { position };
 };
 

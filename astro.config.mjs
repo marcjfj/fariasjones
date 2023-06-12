@@ -16,14 +16,15 @@ const setLayout = () => {
 // https://astro.build/config
 export default defineConfig({
   output: "server",
-  adapter: vercel(),
-  analytics: true,
+  adapter: vercel({
+    analytics: true,
+  }),
   integrations: [tailwind(), svelte(), mdx()],
   vite: {
     plugins: [
       nodePolyfills({
-        exclude: ["fs"],
-        protocolImports: true,
+        // exclude: ["fs"],
+        protocolImports: false,
       }),
     ],
     resolve: {
