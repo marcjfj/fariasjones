@@ -1,7 +1,7 @@
 <script lang="ts">
 import Editor from "./Editor/Editor.svelte";
 import Terminal from "./Terminal/Terminal.svelte";
-import data from "@data/heroData.ts";
+import data from "@data/hero";
 import 'iconify-icon'
 
 let selected = 'TERMINAL'

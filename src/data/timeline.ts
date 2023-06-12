@@ -17,7 +17,7 @@ export default [
     imageAlt: "VMLY&R",
     title: "Development Lead, Innovations",
     description:
-      "Rapid development of prototypes and proof of concepts for creative new ideas and products. Writing documentation for handoff to other teams.",
+      "Rapid development of prototypes and proof-of-concepts for creative new ideas and products. Creation of architectural documentation.",
     tags: ["Typescript", "Vue", "Python", "AWS", "MongoDB", "Node.js"],
   },
   {
