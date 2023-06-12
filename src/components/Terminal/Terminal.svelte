@@ -14,7 +14,7 @@ let input = '';
 
 
 onMount(async () => {
-  runProgram(termElement, input);
+  runProgram(termElement, input, dispatch);
 });
 
 let termElement: HTMLDivElement;

@@ -12,7 +12,7 @@ export default {
   cursorBlink: true,
   theme: {
     background: colors.gray["900"],
-    foreground: colors.sky["400"],
+    foreground: colors.sky["200"],
     cursor: colors.emerald["400"],
     cursorAccent: colors.emerald["900"],
     selectionForeground: colors.amber["400"],
@@ -21,7 +21,7 @@ export default {
     red: "#f00",
     green: colors.emerald["400"],
     yellow: "#ff0",
-    blue: "#00f",
+    blue: colors.sky["400"],
     magenta: "#f0f",
     cyan: "#0ff",
     white: colors.sky["200"],

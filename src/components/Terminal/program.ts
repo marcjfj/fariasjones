@@ -1,12 +1,25 @@
 import c from "ansi-colors";
 import Theme from "./theme";
 import FontFaceObserver from "fontfaceobserver";
+import { pause, nl, start, nlst, clearLine, moveLeft } from "./utils";
+import commands, { listDir } from "./commands";
 
-const start = c.green("$ ");
-const nl = "\r\n";
+let dispatch: any = null;
 
-// const files = (await import.meta.glob("../../*/**")) || [];
-// console.log(files);
+let tree: any = null;
+
+let position = "";
+
+const history: string[] = [];
+let historyIndex = -1;
+
+let cursorPosition: number = 0;
+
+const fetchRepo = async () => {
+  const res = await fetch("/repo");
+  const repoData = await res.json();
+  return repoData;
+};
 
 const welcome = c.white(
   `Welcome to the terminal! \r\nType 'help' to get started.\r\n`
@@ -15,19 +28,31 @@ const welcome = c.white(
 const initTerminal = async (termElement: HTMLElement, input: string) => {
   const { Terminal } = await import("xterm");
   await import("xterm/css/xterm.css");
+  const { FitAddon } = await import("xterm-addon-fit");
+
   const term = new Terminal({
     ...Theme,
     rows: 10,
   });
+  const fitAddon = new FitAddon();
+  term.loadAddon(fitAddon);
+
   const font = new FontFaceObserver(Theme.fontFamily, {
     weight: Theme.fontWeight,
   });
   await font.load();
   term.open(termElement);
-  term.onKey((e) => {
+  fitAddon.fit();
+  term.onKey(async (e) => {
     if (e.domEvent.key === "Enter") {
-      handleInput(term, input);
-      term.write(nl + start);
+      if (!input.length) return term.write(nlst(position));
+      if (!history.includes(input)) {
+        history.unshift(input);
+      }
+      term.write(nl);
+      await handleCmd(term, input);
+      term.write(nlst(position));
+      cursorPosition = 0;
       input = "";
       return;
     }
@@ -37,43 +62,104 @@ const initTerminal = async (termElement: HTMLElement, input: string) => {
       term.write("\b \b");
       return;
     }
-    // if (e.domEvent.key === 'ArrowUp') {
-    //   return;
-    // }
-    // if (e.domEvent.key === 'ArrowDown') {
-    //   return;
-    // }
-    // if (e.domEvent.key === 'ArrowLeft') {
-    //   return;
-    // }
-    input += e.key;
-
-    term.write(e.key);
+    if (e.domEvent.key === "ArrowUp") {
+      e.domEvent.preventDefault();
+      if (history.length) {
+        if (historyIndex < history.length - 1) {
+          historyIndex++;
+        }
+        input = history[historyIndex];
+        cursorPosition = input.length;
+        clearLine(term);
+        term.write(`\r${start(position)}${input}`);
+        cursorPosition = input.length;
+      }
+      return;
+    }
+    if (e.domEvent.key === "ArrowDown") {
+      e.domEvent.preventDefault();
+      if (history.length) {
+        if (historyIndex > 0) {
+          historyIndex--;
+        }
+        input = history[historyIndex];
+        cursorPosition = input.length;
+        clearLine(term);
+        term.write(`\r${start(position)}${input}`);
+      }
+      return;
+    }
+    if (e.domEvent.key === "ArrowLeft") {
+      if (cursorPosition === 0) return;
+      cursorPosition--;
+      term.write(e.key);
+      return;
+    }
+    if (e.domEvent.key === "ArrowRight") {
+      if (cursorPosition >= input.length) return;
+      cursorPosition++;
+      term.write(e.key);
+      return;
+    }
+    console.log({ cursorPosition, input });
+    if (cursorPosition >= input.length) {
+      input += e.key;
+      cursorPosition++;
+      term.write(e.key);
+    } else {
+      console.log("inner", { cursorPosition, input });
+      const start = input.slice(0, cursorPosition);
+      const end = input.slice(cursorPosition);
+      input = start + e.key + end;
+      term.write(e.key);
+      term.write(end);
+      moveLeft(term, end.length);
+      cursorPosition++;
+    }
   });
   return term;
 };
 
 const printWelcome = (term: any) => {
   term.write(`${welcome} \r\n`);
-  term.write(start);
+  term.write(start(position));
 };
 
-const handleInput = (term: any, input: string) => {
-  if (input === "help") {
-    term.write(
-      c.white(
-        `Here are some commands you can try: \r\n\r\n` +
-          `  ${c.green("ls")} - list directories \r\n` +
-          `  ${c.green("cd")} - change directories \r\n` +
-          `  ${c.green("open")} - open a file \r\n` +
-          `  ${c.green("clear")} - Clear the terminal \r\n`
-      )
-    );
+const handleCmd = async (term: any, input: string) => {
+  const [cmd, ...args] = input.split(" ");
+  console.log({ cmd, args });
+  const matched = commands.find((i) => i.name === cmd);
+  if (matched) {
+    const out = await matched.handler(term, args, position, tree, dispatch);
+    if (out.hasOwnProperty("position")) {
+      position = out.position;
+    }
+    return;
+  } else {
+    term.write(nl);
+    term.write(c.red(`Command not found: ${cmd}`));
+    term.write(nl);
     return;
   }
 };
 
-export const runProgram = async (termElement: HTMLElement, input: string) => {
+export const runProgram = async (
+  termElement: HTMLElement,
+  input: string,
+  dispatcher: any
+) => {
+  dispatch = dispatcher;
   const term = await initTerminal(termElement, input);
   printWelcome(term);
+  const repo = await fetchRepo();
+  tree = repo.tree;
+  await pause(1000);
+  term.write("ls");
+  await pause(200);
+  term.write(nl);
+  await listDir(term, "", position, tree);
+  term.write(nlst(position));
+  input = "";
+  cursorPosition = 0;
+  return;
 };

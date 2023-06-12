@@ -6,8 +6,19 @@ import 'iconify-icon'
 
 let selected = 'TERMINAL'
 
+let selectedFile: any = null;
+
+
 const select = ({detail}: {detail: string}) => {
   selected = detail;
+}
+
+const openFile = async ({detail}: any) => {
+  selected = 'EDITOR'
+  selectedFile = detail.file;
+  const res = await fetch(selectedFile.url);
+  const data = await res.json();
+  selectedFile.content = atob(data.content);
 }
 
 $: positionClass = {
@@ -28,10 +39,10 @@ $: positionClass = {
         class="absolute pointer-events-none -right-8 -top-8 hidden h-12 w-12 rounded-tr-2xl border-r-8 border-t-8 border-gray-700 md:block"
       >
       </div>
-      <Editor on:select={select}  selected={selected === 'EDITOR'} title="marc.ts" />
+      <Editor on:select={select}  selected={selected === 'EDITOR'} title={selectedFile?.path || 'marc.ts'} content={selectedFile?.content || undefined} />
     </div>
     <div class={`relative ${positionClass.TERMINAL} -mt-8 ml-8 mr-8 hidden lg:block lg:w-auto`}>
-      <Terminal on:select={select} selected={selected === 'TERMINAL'} />
+      <Terminal on:open={openFile} on:select={select} selected={selected === 'TERMINAL'} />
       <div
         class="absolute pointer-events-none -bottom-8 -left-8 h-12 w-12 rounded-bl-2xl border-b-8 border-l-8 border-gray-700"
       >

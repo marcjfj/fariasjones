@@ -2,6 +2,7 @@
   import { onMount } from 'svelte'
   import WindowHeader from '../WindowHeader.svelte';
   import { createEventDispatcher } from 'svelte';
+  import { get } from 'svelte/store';
 
 	const dispatch = createEventDispatcher();
 
@@ -15,13 +16,35 @@
     }
   }`
 
-  export let lang = 'typescript'
+  const langs =  {
+    css: 'css',
+    js: 'javascript',
+    json: 'json',
+    md: 'markdown',
+    mjs: 'javascript',
+    cjs: 'javascript',
+    ts: 'typescript',
+    astro: 'typescript',
+    svelte: 'typescript',
+  } as any;
+
+  const getLang = (title: string) => {
+    const ext = title.split('.').pop()
+    if (!ext) return 'plaintext'
+    return langs[ext] || 'plaintext'
+  }
+
 
   export let title = 'marc.ts'
+
+  let monaco: any
+
+  let editor: any
+  $: if (editor && monaco && content) editor.setModel(monaco.editor.createModel(content, getLang(title)));
   
   let container: HTMLDivElement
   onMount(async () => {
-    const monaco = await import('monaco-editor')
+    monaco = await import('monaco-editor')
     const {default:editorWorker} = await import('monaco-editor/esm/vs/editor/editor.worker?worker')
     const {default:jsonWorker} = await import('monaco-editor/esm/vs/language/json/json.worker?worker')
     const {default:cssWorker} = await import('monaco-editor/esm/vs/language/css/css.worker?worker')
@@ -46,9 +69,9 @@
     }
   }
   
-  const editor = monaco.editor.create(container, {
+  editor = monaco.editor.create(container, {
     value: content,
-    language: lang,
+    language: 'typescript',
     fontSize: window.innerWidth < 768 ? 10 : 12,
     fontFamily: 'IBM Plex Mono',
     fontLigatures: true,
@@ -61,12 +84,16 @@
     },
     
   })
+  
+
   const {theme} = await import('./theme');
   monaco.editor.defineTheme('theme', theme)
   monaco.editor.setTheme('theme')
 
-  const contentHeight = monaco.editor.getModels()[0].getLineCount() * (window.innerWidth < 768 ? 20 : 22);
-  container.style.height = `${contentHeight}px`;
+  monaco.languages.typescript.typescriptDefaults.setDiagnosticsOptions({
+  noSemanticValidation: true,
+  noSyntaxValidation: true,
+});
 
 })
 
@@ -79,7 +106,9 @@ const select = (frame: string) => {
 
 <div on:click={() => select('EDITOR')} on:keydown={() => select('EDITOR')} class={`rounded-lg min-h-[257px] flex pb-4 flex-col bg-gray-900 overflow-hidden shadow-xl border ${borderClass}`}>
   <WindowHeader title={title} />
-  <div bind:this={container} class="w-full h-full">
+  <div class="w-full flex-grow h-full relative">
+    <div bind:this={container} class="absolute inset-0">
+    </div>
   </div>
 
 </div>
