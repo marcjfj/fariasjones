@@ -183,10 +183,12 @@ const introSequence = async (term: any) => {
   await pause(200);
   term.write(nl);
   term.write(`Resolving deltas: 100% (56/56), done.`);
-  await pause(200);
+  await pause(800);
   term.write(nlst(position));
-  slowType(term, "open src/data/hero.ts"+nl);
   await pause(500);
+  slowType(term, "open src/data/hero.ts");
+  term.write(nl);
+  await pause(1000);
   handleOpen(term, ["src/data/hero.ts"], position, tree, dispatch);
   term.write(nlst(position));
   await pause(2000);
