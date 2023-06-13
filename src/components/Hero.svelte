@@ -58,7 +58,7 @@ $: if (innerWidth > 1024) {
       </div>
     </div>
   </div>
-  <div class="col-span-6 max-w-lg ml-4 mt-12 lg:mb-32 lg:pr-10 xl:ml-12 xl:pr-0">
+  <div class="col-span-6 max-w-lg ml-4 mt-12 mb-32 lg:pr-10 xl:ml-12 xl:pr-0">
     <h1 class="mb-4 text-5xl font-bold text-sky-200 md:text-6xl">
       {data.title}
     </h1>
