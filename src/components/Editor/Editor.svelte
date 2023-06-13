@@ -2,7 +2,6 @@
   import { onMount } from 'svelte'
   import WindowHeader from '../WindowHeader.svelte';
   import { createEventDispatcher } from 'svelte';
-  import {initEditor} from './program.ts';
 
 	const dispatch = createEventDispatcher();
 
@@ -36,6 +35,7 @@
   
   let container: HTMLDivElement
   onMount(async () => {
+    const initEditor = (await import('./program.ts')).initEditor
     const e = await initEditor(container)
     monaco = e.monaco
     editor = e.editor
