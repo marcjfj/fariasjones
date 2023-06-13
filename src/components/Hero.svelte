@@ -1,5 +1,4 @@
 <script lang="ts">
-import { onMount } from "svelte";
 import Editor from "./Editor/Editor.svelte";
 import Terminal from "./Terminal/Terminal.svelte";
 import data from "@data/hero";
