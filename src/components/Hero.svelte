@@ -26,12 +26,6 @@ $: positionClass = {
   EDITOR: selected === 'EDITOR' ? 'z-20' : 'z-0',
   TERMINAL: selected === 'TERMINAL' ? 'z-20' : 'z-0',
 }
-let showFrames = false;
-onMount(() => {
-  setTimeout(() => {
-    showFrames = true;
-  }, 200)
-})
 
 </script>
 
