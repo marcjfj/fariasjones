@@ -46,9 +46,7 @@ $: if (innerWidth > 1024) {
         class="absolute pointer-events-none -right-8 -top-8 hidden h-12 w-12 rounded-tr-2xl border-r-8 border-t-8 border-gray-700 md:block"
       >
       </div>
-      {#if loadEditor}
-      <Editor on:select={select}  selected={selected === 'EDITOR'} title={selectedFile?.path || ''} content={selectedFile?.content || undefined} />
-      {/if}
+      <Editor on:select={select} shouldLoad={loadEditor}  selected={selected === 'EDITOR'} title={selectedFile?.path || ''} content={selectedFile?.content || undefined} />
     </div>
     <div class={`relative ${positionClass.TERMINAL} -mt-8 ml-8 mr-8 lg:w-auto`}>
       <Terminal on:open={openFile} on:select={select} selected={selected === 'TERMINAL'} />
