@@ -134,6 +134,7 @@ const handleCmd = async (term: any, input: string) => {
   } else {
     term.write(nl);
     term.write(c.red(`Command not found: ${cmd}`));
+    term.write(c.yellow(`\r\nType 'help' to get started.`));
     term.write(nl);
     return;
   }
