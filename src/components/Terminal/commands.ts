@@ -56,7 +56,7 @@ const positionFilter = (item: any, pos: string) => {
     item.path.replace(pos + "/", "").split("/").length < 2
   );
 };
-const cleanPath = (path: string,) => {
+const cleanPath = (path: string) => {
   return path.split("/").pop();
 };
 export const listDir = async (
@@ -66,8 +66,12 @@ export const listDir = async (
   tree: any
 ) => {
   const items = tree
-    .filter((i: any) => positionFilter(i, position ? position + "/" : "" + path))
+    .filter((i: any) =>
+      positionFilter(i, position + (position && path ? "/" : "") + path)
+    )
     .map((i: any) => ({ ...i, path: cleanPath(i.path) }));
+  console.log(position + (position && path ? "/" : "") + path);
+  console.log(items);
   for await (let i of items) {
     await pause(120);
     term.write((i.type === "blob" ? c.blue : c.white)(i.path));
@@ -83,7 +87,11 @@ const handleLs = async (
   tree: any,
   ...rest: any[]
 ) => {
-  const path = args[0];
+  let path = args[0];
+  // remove leading or trailing slash
+  if (path && path.startsWith("/")) path = path.slice(1);
+  if (path && path.endsWith("/")) path = path.slice(0, -1);
+
   if (!path || path === "~") {
     await listDir(term, path, position, tree);
     return {};
@@ -107,7 +115,9 @@ const handleHelp = (term: any) => {
   term.write(
     c.white(
       `Here are some commands you can try: \r\n\r\n` +
-      commands.map((cmd) => c.blue(`  ${c.white(cmd.name)} - ${cmd.description}`)).join("\r\n")
+        commands
+          .map((cmd) => c.blue(`  ${c.white(cmd.name)} - ${cmd.description}`))
+          .join("\r\n")
     )
   );
   term.write(nl);

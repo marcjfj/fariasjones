@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { onMount } from "svelte";
 import Editor from "./Editor/Editor.svelte";
 import Terminal from "./Terminal/Terminal.svelte";
 import data from "@data/hero";
@@ -25,6 +26,12 @@ $: positionClass = {
   EDITOR: selected === 'EDITOR' ? 'z-20' : 'z-0',
   TERMINAL: selected === 'TERMINAL' ? 'z-20' : 'z-0',
 }
+let showFrames = false;
+onMount(() => {
+  setTimeout(() => {
+    showFrames = true;
+  }, 200)
+})
 
 </script>
 

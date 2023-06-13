@@ -25,4 +25,4 @@ export const slowType = async (term: any, text: string) => {
     await pause(30);
     term.write(char);
   }
-}
+};

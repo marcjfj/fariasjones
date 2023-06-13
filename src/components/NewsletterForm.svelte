@@ -1,6 +1,5 @@
 <script lang="ts">
 import {addSubscriber} from '@utils/newsletter';
-// import {onMount} from 'svelte';
 import Icon from '@iconify/svelte';
 
 let email: string = "";
@@ -14,9 +13,6 @@ const handleSubmit = async (e: Event) => {
   submitted = true;
   loading = false;
 };
-
-
-
 
 </script>
 
