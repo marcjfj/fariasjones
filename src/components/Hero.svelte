@@ -28,8 +28,6 @@ $: positionClass = {
 let innerWidth = 0;
 let loadEditor = false;
 
-// test redeploy
-
 $: if (innerWidth > 1024) {
   loadEditor = true;
 }
