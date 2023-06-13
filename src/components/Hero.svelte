@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { onMount } from "svelte";
+import { onMount } from "svelte";
 import Editor from "./Editor/Editor.svelte";
 import Terminal from "./Terminal/Terminal.svelte";
 import data from "@data/hero";
@@ -26,9 +26,16 @@ $: positionClass = {
   EDITOR: selected === 'EDITOR' ? 'z-20' : 'z-0',
   TERMINAL: selected === 'TERMINAL' ? 'z-20' : 'z-0',
 }
+let innerWidth = 0;
+let loadEditor = false;
+
+$: if (innerWidth > 1024) {
+  loadEditor = true;
+}
+
 
 </script>
-
+<svelte:window bind:innerWidth />
 <section
   class="relative z-10 mx-auto flex w-full max-w-6xl grid-cols-12 flex-col-reverse items-center justify-center p-4 lg:grid min-h-screen lg:items-center lg:gap-4 lg:p-0"
 >
@@ -40,7 +47,9 @@ $: positionClass = {
         class="absolute pointer-events-none -right-8 -top-8 hidden h-12 w-12 rounded-tr-2xl border-r-8 border-t-8 border-gray-700 md:block"
       >
       </div>
+      {#if loadEditor}
       <Editor on:select={select}  selected={selected === 'EDITOR'} title={selectedFile?.path || ''} content={selectedFile?.content || undefined} />
+      {/if}
     </div>
     <div class={`relative ${positionClass.TERMINAL} -mt-8 ml-8 mr-8 lg:w-auto`}>
       <Terminal on:open={openFile} on:select={select} selected={selected === 'TERMINAL'} />
