@@ -29,10 +29,10 @@ $: positionClass = {
 </script>
 
 <section
-  class="relative z-10 mx-auto flex w-full max-w-6xl grid-cols-12 flex-col-reverse items-center justify-end p-4 lg:grid lg:min-h-screen lg:items-center lg:gap-4 lg:p-0"
+  class="relative z-10 mx-auto flex w-full max-w-6xl grid-cols-12 flex-col-reverse items-center justify-center p-4 lg:grid min-h-screen lg:items-center lg:gap-4 lg:p-0"
 >
   <div
-    class="-mb-20 w-full max-w-2xl lg:col-span-6 lg:mb-16 lg:block xl:col-span-6"
+    class="hidden -mb-20 w-full max-w-2xl lg:col-span-6 lg:mb-16 lg:block xl:col-span-6"
   >
     <div class={`relative ${positionClass.EDITOR} w-full lg:-ml-8 lg:mr-24 lg:w-auto`}>
       <div
@@ -41,7 +41,7 @@ $: positionClass = {
       </div>
       <Editor on:select={select}  selected={selected === 'EDITOR'} title={selectedFile?.path || ''} content={selectedFile?.content || undefined} />
     </div>
-    <div class={`relative ${positionClass.TERMINAL} -mt-8 ml-8 mr-8 hidden lg:block lg:w-auto`}>
+    <div class={`relative ${positionClass.TERMINAL} -mt-8 ml-8 mr-8 lg:w-auto`}>
       <Terminal on:open={openFile} on:select={select} selected={selected === 'TERMINAL'} />
       <div
         class="absolute pointer-events-none -bottom-8 -left-8 h-12 w-12 rounded-bl-2xl border-b-8 border-l-8 border-gray-700"
@@ -49,7 +49,7 @@ $: positionClass = {
       </div>
     </div>
   </div>
-  <div class="col-span-6 ml-4 mt-12 lg:mb-32 lg:pr-10 xl:ml-12 xl:pr-0">
+  <div class="col-span-6 max-w-lg ml-4 mt-12 lg:mb-32 lg:pr-10 xl:ml-12 xl:pr-0">
     <h1 class="mb-4 text-5xl font-bold text-sky-200 md:text-6xl">
       {data.title}
     </h1>

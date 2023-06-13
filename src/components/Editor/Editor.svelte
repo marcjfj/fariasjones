@@ -43,13 +43,13 @@
 })
 
 export let selected: boolean = false;
-$: borderClass = selected ? 'border-gray-600' : 'border-gray-700';
+$: selectedClasses = selected ? 'border-gray-600' : 'border-gray-700 opacity-90';
 const select = (frame: string) => {
   dispatch('select', frame)
 }
 </script>
 
-<div  on:click={() => select('EDITOR')} on:keydown={() => select('EDITOR')} class={`rounded-lg min-h-[257px] flex pb-4 flex-col bg-gray-900 overflow-hidden shadow-xl border ${borderClass}`}>
+<div on:click={() => select('EDITOR')} on:keydown={() => select('EDITOR')} class={`rounded-lg min-h-[265px] flex pb-2 flex-col bg-gray-900 overflow-hidden shadow-xl border ${selectedClasses}`}>
   <WindowHeader title={title} />
   <div class="w-full flex-grow h-full relative">
     <div bind:this={container} class="absolute inset-0">

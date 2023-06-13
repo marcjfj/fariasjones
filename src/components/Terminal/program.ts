@@ -152,17 +152,18 @@ export const runProgram = async (
   await pause(1000);
   await introSequence(term);
 
-
   input = "";
   cursorPosition = 0;
   return;
 };
 
-
 const introSequence = async (term: any) => {
-  term.write(c.green('$ '))
+  term.write(c.green("$ "));
   await pause(200);
-  await slowType(term, "git clone https://github.com/marcjfj/fariasjones.git .");
+  await slowType(
+    term,
+    "git clone https://github.com/marcjfj/fariasjones.git ."
+  );
   term.write(nl);
   term.write(`Cloning into '.'...`);
   await pause(1000);
@@ -176,7 +177,9 @@ const introSequence = async (term: any) => {
   term.write(`Compressing objects: 100% (151/151), done.`);
   await pause(200);
   term.write(nl);
-  term.write(`remote: Total 151 (delta 56), reused 128 (delta 33), pack-reused 0`);
+  term.write(
+    `remote: Total 151 (delta 56), reused 128 (delta 33), pack-reused 0`
+  );
   await pause(200);
   term.write(nl);
   term.write(`100% (151/151), 243.76 KiB | 1.85 MiB/s, done.`);
@@ -186,16 +189,11 @@ const introSequence = async (term: any) => {
   await pause(800);
   term.write(nlst(position));
   await pause(500);
-  slowType(term, "open src/data/hero.ts");
+  const file = "src/components/Terminal/welcome.ts";
+  await slowType(term, `open ${file}`);
   term.write(nl);
-  await pause(1000);
-  handleOpen(term, ["src/data/hero.ts"], position, tree, dispatch);
-  term.write(nlst(position));
-  await pause(2000);
-  slowType(term, "ls");
-  await pause(500);
-  term.write(nl);
-  await listDir(term, "", position, tree);
+  await pause(200);
+  handleOpen(term, [file], position, tree, dispatch);
   term.write(nlst(position));
   return;
-}
+};

@@ -4,10 +4,9 @@ import WindowHeader from '../WindowHeader.svelte';
 import {runProgram} from './program';
 import { createEventDispatcher } from 'svelte';
 
-
 const dispatch = createEventDispatcher();
 
-export let title = '~/projects';
+export let title = '~/fariasjones';
 let input = '';
 
 
@@ -18,7 +17,7 @@ onMount(async () => {
 let termElement: HTMLDivElement;
 
 export let selected: boolean = false;
-$: borderClass = selected ? 'border-gray-600' : 'border-gray-700';
+$: borderClass = selected ? 'border-gray-600' : 'border-gray-700 opacity-90';
 const select = (type: string) => {
   dispatch('select', type)
 }

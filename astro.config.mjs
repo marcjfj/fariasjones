@@ -34,7 +34,7 @@ export default defineConfig({
   markdown: {
     remarkPlugins: [setLayout],
     shikiConfig: {
-      theme: "slack-dark",
+      theme: "poimandres",
       wrap: false,
     },
   },

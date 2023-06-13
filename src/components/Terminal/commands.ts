@@ -65,11 +65,9 @@ export const listDir = async (
   position: string,
   tree: any
 ) => {
-  console.log(position + (path ? "/" + path : ""))
   const items = tree
     .filter((i: any) => positionFilter(i, position ? position + "/" : "" + path))
     .map((i: any) => ({ ...i, path: cleanPath(i.path) }));
-  console.log(items);
   for await (let i of items) {
     await pause(120);
     term.write((i.type === "blob" ? c.blue : c.white)(i.path));
@@ -86,7 +84,6 @@ const handleLs = async (
   ...rest: any[]
 ) => {
   const path = args[0];
-  console.log({ path, position, tree })
   if (!path || path === "~") {
     await listDir(term, path, position, tree);
     return {};
@@ -95,7 +92,6 @@ const handleLs = async (
     (i: any) =>
       i.path === `${position ? position + "/" : ""}${path}` && i.type === "tree"
   );
-  console.log(matched);
   if (matched) {
     await listDir(term, path, position, tree);
     return {};
