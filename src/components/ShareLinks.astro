@@ -26,12 +26,12 @@ const shareLinks = [
   {
     name: "Email",
     url: `mailto:?subject=Check out this article!&body=${currentUrl}`,
-    icon: "mdi:email",
+    icon: "heroicons-outline:at-symbol",
   },
 ];
 ---
 
-<ul class="flex flex-col gap-4 border-r border-gray-300 p-4">
+<ul class="flex flex-col gap-4 border rounded-full border-gray-300 p-4">
   {
     shareLinks.map((link) => {
       return (
